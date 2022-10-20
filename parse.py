@@ -73,6 +73,12 @@ class EarleyChart:
         self.grammar = grammar
         self.progress = progress
         self.profile: CounterType[str] = Counter()
+        self.maxWeights = 0;
+
+        self.backPointers = {};
+
+
+        self.weights = {};
 
         self.cols: List[Agenda]
         self._run_earley()    # run Earley's algorithm to construct self.cols
@@ -84,10 +90,28 @@ class EarleyChart:
         pdb.set_trace()
         for item in self.cols[-1].all():    # the last column
             if (item.rule.lhs == self.grammar.start_symbol   # a ROOT item in this column
-                and item.next_symbol() is None               # that is complete 
+                and item.next_symbol() is None               # that is complete
                 and item.start_position == 0):               # and started back at position 0
+                    max(self.maxWeights, self.weights[item])
                     return True
         return False   # we didn't find any appropriate item
+
+    def returnMaxProbability(self) -> float:
+        """Was the sentence accepted?
+                That is, does the finished chart contain an item corresponding to a parse of the sentence?
+                This method answers the recognition question, but not the parsing question."""
+        for item in self.cols[-1].all():  # the last column
+            if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
+                    and item.next_symbol() is None  # that is complete
+                    and item.start_position == 0):  # and started back at position 0
+                self.maxWeights = max(self.maxWeights, self.weights[item])
+                #if we find a item that lead to maximum probability parse, we can then recursively iterate back to its origin.
+        return self.maxWeights  #returns maxProb of Parse.
+
+    def printItem(self, chart):
+        #recursively print the parse tree from the chart of backpointers
+
+        return;
 
     def _run_earley(self) -> None:
         """Fill in the Earley chart"""
@@ -103,7 +127,9 @@ class EarleyChart:
         # 
         # The iterator over numbered columns is `enumerate(self.cols)`.  
         # Wrapping this iterator in the `tqdm` call provides a progress bar.
-        for i, column in tqdm.tqdm(enumerate(self.cols),
+        from tqdm import tqdm
+
+        for i, column in tqdm(enumerate(self.cols),
                                    total=len(self.cols),
                                    disable=not self.progress):
             log.debug("")
@@ -111,7 +137,7 @@ class EarleyChart:
             while column:    # while agenda isn't empty
                 item = column.pop()   # dequeue the next unprocessed item
                 next = item.next_symbol();
-                if next is None:
+                if next is None: #if there is nothing u find its customer and attach.
                     # Attach this complete constituent to its customers
                     log.debug(f"{item} => ATTACH")
                     self._attach(item, i)   
@@ -135,9 +161,17 @@ class EarleyChart:
     def _scan(self, item: Item, position: int) -> None:
         """Attach the next word to this item that ends at position, 
         if it matches what this item is looking for next."""
+        #keeps the backpointer of the rules
+
         if position < len(self.tokens) and self.tokens[position] == item.next_symbol():
             new_item = item.with_dot_advanced()
             self.cols[position + 1].push(new_item)
+
+            if item in self.weights:
+                self.weights[new_item] = self.weights[item]
+            else:
+                self.weights[new_item] = item.rule.weight
+
             log.debug(f"\tScanned to get: {new_item} in column {position+1}")
             self.profile["SCAN"] += 1
 
@@ -146,10 +180,18 @@ class EarleyChart:
         customers' dots to create new items in this column.  (This operation is sometimes
         called "complete," but actually it attaches an item that was already complete.)
         """
+        #backponter
+        #backpointer datastrcture
         mid = item.start_position   # start position of this item = end position of item to its left
         for customer in self.cols[mid].all():  # could you eliminate this inefficient linear search?
+            #for all constitutients in agenda
             if customer.next_symbol() == item.rule.lhs:
                 new_item = customer.with_dot_advanced()
+                if customer in self.weights:
+                    self.weights[new_item] = self.weights[item] + self.weights[customer]
+                else:
+                    self.weights[new_item] = self.weights[item] + customer.rule.weight
+
                 self.cols[position].push(new_item)
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
@@ -196,7 +238,6 @@ class Agenda:
     ...    print(a.pop())
     5
     7
-
     """
 
     def __init__(self) -> None:
@@ -266,8 +307,12 @@ class Grammar:
                 # Parse tab-delimited linfore of format <probability>\t<lhs>\t<rhs>
                 _prob, lhs, _rhs = line.split("\t")
                 prob = float(_prob)
-                rhs = tuple(_rhs.split())  
+                rhs = tuple(_rhs.split())
                 rule = Rule(lhs=lhs, rhs=rhs, weight=-math.log2(prob))
+
+                #rule.weight holds the weight for each rule
+                #rule.weight
+
                 if lhs not in self._expansions:
                     self._expansions[lhs] = []
                 self._expansions[lhs].append(rule)
@@ -299,7 +344,7 @@ class Rule:
 
     def __repr__(self) -> str:
         """Complete string used to show this rule instance at the command line"""
-        return f"{self.lhs} → {' '.join(self.rhs)}"
+        return f"{self.lhs} → {' '.join(self.rhs)}, {self.weight}"
 
     
 # We particularly want items to be immutable, since they will be hashed and 
@@ -309,11 +354,14 @@ class Item:
     """An item in the Earley parse table, representing one or more subtrees
     that could yield a particular substring."""
     rule: Rule
+    #,weights: {}
     dot_position: int
     start_position: int
+
     # We don't store the end_position, which corresponds to the column
     # that the item is in, although you could store it redundantly for 
     # debugging purposes if you wanted.
+
 
     def next_symbol(self) -> Optional[str]:
         """What's the next, unprocessed symbol (terminal, non-terminal, or None) in this partially matched rule?"""
@@ -324,6 +372,7 @@ class Item:
             return self.rule.rhs[self.dot_position]
 
     def with_dot_advanced(self) -> Item:
+        #update item with new weights?
         if self.next_symbol() is None:
             raise IndexError("Can't advance the dot past the end of the rule")
         return Item(rule=self.rule, dot_position=self.dot_position + 1, start_position=self.start_position)
@@ -333,8 +382,9 @@ class Item:
         DOT = "·"
         rhs = list(self.rule.rhs)  # Make a copy.
         rhs.insert(self.dot_position, DOT)
+        #self.weights[(self.start_position, self.rule.lhs.join(rhs))] = self.rule.weight;
         dotted_rule = f"{self.rule.lhs} → {' '.join(rhs)}"
-        return f"({self.start_position}, {dotted_rule})"  # matches notation on slides
+        return f"({self.start_position}, {dotted_rule})" # matches notation on slides
 
 
 def main():
@@ -354,11 +404,11 @@ def main():
                 log.debug(f"Parsing sentence: {sentence}")
                 chart = EarleyChart(sentence.split(), grammar, progress=args.progress)
                 # print the result
-                pdb.set_trace()
                 print(
-                    f"'{sentence}' is {'accepted' if chart.accepted() else 'rejected'} by {args.grammar}"
+                    "Sentence Max Probability:" + str(chart.returnMaxProbability())
                 )
                 log.debug(f"Profile of work done: {chart.profile}")
+
 
 
 if __name__ == "__main__":
