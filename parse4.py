@@ -95,10 +95,11 @@ class EarleyChart:
         return False  # we didn't find any appropriate item
 
     def printItem(self,last_item):
-        if last_item:
+        if last_item.backpointer is not None:
+            print(last_item.backpointer.rule)
             self.printItem(last_item.backpointer)
         else:
-            return print(last_item.backpointer.rule)
+            return last_item.rule
         #self.printItem(last_item.backpointer)
         #if last_item:
             #print(last_item.backpointer)
@@ -108,16 +109,14 @@ class EarleyChart:
        # print(last_item.backpointer.rule)
     
     def helper_print(self) :
-        
         for item in self.cols[-1].all():  # the last column
+            #print(item.backpointer.rule)
             if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
                     and item.next_symbol() is None  # that is complete
                     and item.start_position == 0):  # and started back at position 0
-                #print(self.printItem(item.backpointer.rule))
-                print(self.printItem(item))
-
-
-
+              
+                print(item.backpointer.backpointer)
+                #print(self.printItem(item))
 
     def returnMaxProbability(self) -> float:
         """Was the sentence accepted?
@@ -176,7 +175,8 @@ class EarleyChart:
     def _predict(self, nonterminal: str, position: int) -> None:
         """Start looking for this nonterminal at the given position."""
         for rule in self.grammar.expansions(nonterminal):
-            new_item = Item(rule, rule.weight, dot_position=0, start_position=position, backpointer=self)
+            new_item = Item(rule, rule.weight, dot_position=0, start_position=position, backpointer=None)
+
           #  new_item.backpointer = new_item
             self.cols[position].push(new_item)
             log.debug(f"\tBackpointer: {new_item.backpointer}")
@@ -207,11 +207,11 @@ class EarleyChart:
         for customer in self.cols[mid].all():  # could you eliminate this inefficient linear search?
             #for all constitutients in agenda
             if customer.next_symbol() == item.rule.lhs:
-                new_item = customer.with_dot_advanced(weights=item.weights + customer.weights, backpointer=item);
+                new_item = customer.with_dot_advanced(weights=item.weights + customer.weights, backpointer=customer);
                 self.cols[position].push(new_item)
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
-                log.debug(f"\t Rule: {new_item.rule},Backpointer: {new_item.backpointer.backpointer}")
+                log.debug(f"\t Backpointer: {new_item.backpointer}")
 
 
 class Agenda:
