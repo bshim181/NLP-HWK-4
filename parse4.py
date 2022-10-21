@@ -96,7 +96,7 @@ class EarleyChart:
 
     def printItem(self,last_item):
         if last_item:
-            return self.printItem(last_item.backpointer)
+            self.printItem(last_item.backpointer)
         else:
             return print(last_item.backpointer.rule)
         #self.printItem(last_item.backpointer)
@@ -106,8 +106,6 @@ class EarleyChart:
       #  else:
           #  return last_item.backpointer.rule
        # print(last_item.backpointer.rule)
-      
-
     
     def helper_print(self) :
         
