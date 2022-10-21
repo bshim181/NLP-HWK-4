@@ -115,8 +115,8 @@ class EarleyChart:
                     and item.next_symbol() is None  # that is complete
                     and item.start_position == 0):  # and started back at position 0
               
-                print(item.backpointer.backpointer)
-                #print(self.printItem(item))
+                
+                print(self.printItem(item))
 
     def returnMaxProbability(self) -> float:
         """Was the sentence accepted?
