@@ -94,6 +94,33 @@ class EarleyChart:
                 return True
         return False  # we didn't find any appropriate item
 
+    def printItem(self,last_item):
+        if last_item:
+            return self.printItem(last_item.backpointer)
+        else:
+            return print(last_item.backpointer.rule)
+        #self.printItem(last_item.backpointer)
+        #if last_item:
+            #print(last_item.backpointer)
+            #print(self.printItem(last_item.backpointer))
+      #  else:
+          #  return last_item.backpointer.rule
+       # print(last_item.backpointer.rule)
+      
+
+    
+    def helper_print(self) :
+        
+        for item in self.cols[-1].all():  # the last column
+            if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
+                    and item.next_symbol() is None  # that is complete
+                    and item.start_position == 0):  # and started back at position 0
+                #print(self.printItem(item.backpointer.rule))
+                print(self.printItem(item))
+
+
+
+
     def returnMaxProbability(self) -> float:
         """Was the sentence accepted?
                 That is, does the finished chart contain an item corresponding to a parse of the sentence?
@@ -106,10 +133,10 @@ class EarleyChart:
                 # if we find a item that lead to maximum probability parse, we can then recursively iterate back to its origin.
         return self.maxWeights  # returns maxProb of Parse.
 
-    def printItem(self, chart):
-        # recursively print the parse tree from the chart of backpointers
+    # def printItem(self, chart):
+    #     # recursively print the parse tree from the chart of backpointers
 
-        return;
+    #     return;
 
     def _run_earley(self) -> None:
         """Fill in the Earley chart"""
@@ -186,7 +213,7 @@ class EarleyChart:
                 self.cols[position].push(new_item)
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
-                log.debug(f"\tBackpointer: {new_item.backpointer}")
+                log.debug(f"\t Rule: {new_item.rule},Backpointer: {new_item.backpointer.backpointer}")
 
 
 class Agenda:
@@ -397,6 +424,7 @@ def main():
                     "Sentence Max Probability:" + str(chart.returnMaxProbability())
                 )
                 log.debug(f"Profile of work done: {chart.profile}")
+                print(chart.helper_print())
 
 
 if __name__ == "__main__":
