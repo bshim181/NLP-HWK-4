@@ -104,7 +104,8 @@ class EarleyChart:
             if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
                     and item.next_symbol() is None  # that is complete
                     and item.start_position == 0):  # and started back at position 0
-                self.maxWeights = min(self.maxWeights, self.weights[0,len(self.tokens), item])
+                self.maxWeights = self.weights[0,len(self.tokens), item]
+                #What would be the best way to track backpointers.
                 #if we find a item that lead to maximum probability parse, we can then recursively iterate back to its origin.
         return self.maxWeights  #returns maxProb of Parse.
 
@@ -163,19 +164,37 @@ class EarleyChart:
         if it matches what this item is looking for next."""
         #keeps the backpointer of the rules
 
-        if position < len(self.tokens) and self.tokens[position] == item.next_symbol():
+        #if i scan an item at 0,0 and push it to next column is it an item of 0, 1 or 1, 1
+
+        """
+            if position < len(self.tokens) and self.tokens[position] == item.next_symbol():
             new_item = item.with_dot_advanced()
             self.cols[position + 1].push(new_item)
             if (position,position,item) in self.weights:
                 self.weights[(position,(position+1),new_item)] = self.weights[(position,position,item)];
             else:
                 self.weights[(position,(position+1),new_item)] = item.rule.weight;
-
-            #self.backPointers[(position,(position+1),new_item)] = item;
-
-            log.debug(f"{position} {item.start_position} {item} \tScanned to get: {new_item} in column {position + 1}")
-            log.debug(f"{position} \tScanned to get: {new_item} in column {position+1}")
+                
+            log.debug(f"{position} \tScanned to get: {new_item} in column {position + 1}")
             self.profile["SCAN"] += 1
+        
+        
+        """
+        #do we initialize a new rule here for scan?
+
+        if position < len(self.tokens) and self.tokens[position] == item.next_symbol():
+            start = item.start_position
+            new_item = item.with_dot_advanced()
+            self.cols[position + 1].push(new_item)
+            if (start, position, item) in self.weights:
+                self.weights[(start, (position + 1), new_item)] = self.weights[(start, position, item)];
+            else:
+                self.weights[(start, (position + 1), new_item)] = item.rule.weight;
+
+            log.debug(f"{position} {self.weights} \tScanned to get: {new_item} in column {position + 1}")
+            self.profile["SCAN"] += 1
+
+
 
     def _attach(self, item: Item, position: int) -> None:
         """Attach this complete item to its customers in previous columns, advancing the
@@ -184,25 +203,21 @@ class EarleyChart:
         """
         #backponter
         #backpointer datastrcture
-
-
         mid = item.start_position   # start position of this item = end position of item to its left
         for customer in self.cols[mid].all():  # could you eliminate this inefficient linear search?
             start = customer.start_position
             if customer.next_symbol() == item.rule.lhs:
                 new_item = customer.with_dot_advanced();
-
-                log.debug(f"{mid} {position} {item} {customer} \t {self.weights}")
-
                 if (start,mid,customer) in self.weights:
-                    self.weights[(start,position,new_item)] = self.weights[(mid,position,item)] + self.weights[(start, mid, customer)];
+                    if ((start,position,new_item) in self.weights):
+                        self.weights[(start,position,new_item)] = min(self.weights[(start,position,new_item)], (self.weights[(mid,position,item)] + self.weights[(start, mid, customer)]))
+                    else:
+                        self.weights[(start,position,new_item)] = self.weights[(mid,position,item)] + self.weights[(start, mid, customer)];
                 else:
                     self.weights[(start,position,new_item)] = self.weights[(mid,position,item)] + customer.rule.weight
-
-                self.backPointers[(start, mid, position), new_item] = (item, customer)
                 
                 self.cols[position].push(new_item)
-                log.debug(f"\tAttached to get: {new_item} in column {position}")
+                log.debug(f"{self.weights} \tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
 
 
@@ -402,7 +417,6 @@ def main():
     logging.basicConfig(level=args.verbose)  # Set logging level appropriately
 
     grammar = Grammar(args.start_symbol, args.grammar)
-    import pdb;
 
     with open(args.sentences) as f:
         for sentence in f.readlines():
