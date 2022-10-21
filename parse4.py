@@ -97,9 +97,10 @@ class EarleyChart:
     def printItem(self,last_item):
         if last_item.backpointer is not None:
             print(last_item.backpointer.rule)
-            self.printItem(last_item.backpointer)
+            return self.printItem(last_item.backpointer)
         else:
             return last_item.rule
+        
         #self.printItem(last_item.backpointer)
         #if last_item:
             #print(last_item.backpointer)
@@ -114,8 +115,6 @@ class EarleyChart:
             if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
                     and item.next_symbol() is None  # that is complete
                     and item.start_position == 0):  # and started back at position 0
-              
-                
                 print(self.printItem(item))
 
     def returnMaxProbability(self) -> float:
@@ -182,6 +181,7 @@ class EarleyChart:
             log.debug(f"\tBackpointer: {new_item.backpointer}")
             log.debug(f"\tPredicted: {new_item} in column {position}")
             self.profile["PREDICT"] += 1
+            
 
     def _scan(self, item: Item, position: int) -> None:
         """Attach the next word to this item that ends at position,
@@ -194,6 +194,7 @@ class EarleyChart:
             log.debug(f"\tScanned to get: {new_item} in column {position + 1}")
             self.profile["SCAN"] += 1
             log.debug(f"\tBackpointer: {new_item.backpointer}")
+            print(self.printItem(item))
 
     def _attach(self, item: Item, position: int) -> None:
         """Attach this complete item to its customers in previous columns, advancing the
@@ -212,6 +213,7 @@ class EarleyChart:
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
                 log.debug(f"\t Backpointer: {new_item.backpointer}")
+                print(self.printItem(item))
 
 
 class Agenda:
