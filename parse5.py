@@ -92,32 +92,24 @@ class EarleyChart:
         return False  # we didn't find any appropriate item
 
     def printItem(self, last_item):
+        if last_item is None:
+            return;
+
         if type(last_item) is not tuple:
             self.printItem(last_item.backpointer);
         else:
-            pdb.set_trace()
-            if type(last_item.backpointer[0]) is tuple:
-                self.printItem(last_item.backpointer[0][1]);
-                self.printItem(last_item.backpointer[1]);
+            if (last_item[0] is not None):
+                #pdb.set_trace()
+                if (len(last_item) == 1):
+                    self.printItem(last_item[0].backpointer)
+                    return print(last_item[0].rule)
+                else:
+                    self.printItem(last_item[0][1].backpointer);
+                    self.printItem(last_item[1].backpointer);
+                    return print(f"{last_item[0][1].rule}\n{last_item[1].rule}")
             else:
-                self.printItem(last_item[1]);
-
-        if last_item is not None and type(last_item) is tuple:
-            print(last_item[1].rule)
-        else:
-            print(last_item.rule);
-            return;
-
-    """
-    
-        def helper_print(self) :
-        for item in self.cols[-1].all():  # the last column
-            #print(item.backpointer.rule)
-            if (item.rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
-                    and item.next_symbol() is None  # that is complete
-                    and item.start_position == 0):  # and started back at position 0
-                print(self.printItem(item))
-    """
+                self.printItem(last_item[1].backpointer);
+                return print(last_item[1].rule)
 
     def returnMaxProbability(self) -> float:
         """Was the sentence accepted?
@@ -182,7 +174,6 @@ class EarleyChart:
         """Start looking for this nonterminal at the given position."""
         for rule in self.grammar.expansions(nonterminal):
             new_item = Item(rule=rule, weights= rule.weight, backpointer=None, dot_position=0, start_position=position)
-            #new_item.backpointer = new_item
             self.cols[position].push(new_item)
             log.debug(f"\tBackpointer: {new_item.backpointer}")
             log.debug(f"\tPredicted: {new_item} in column {position}")
@@ -213,9 +204,11 @@ class EarleyChart:
         mid = item.start_position  # start position of this item = end position of item to its left
         for customer in self.cols[mid].all():  # could you eliminate this inefficient linear search?
             #for all constitutients in agenda
+            #pdb.set_trace()
             if customer.next_symbol() == item.rule.lhs:
                 new_item = customer.with_dot_advanced(weights=(item.weights + customer.weights), backpointer=tuple([customer.backpointer, item]));
-                self.cols[position].push(new_item)
+                if new_item not in self.cols[position].all():
+                    self.cols[position].push(new_item)
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
                 log.debug(f"\t Backpointer: {new_item.backpointer}")

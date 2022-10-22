@@ -1,5 +1,5 @@
 DEBUG:parse5:======================================================================
-DEBUG:parse5:Parsing sentence: Papa ate the caviar
+DEBUG:parse5:Parsing sentence: Papa ate the caviar with a spoon
 DEBUG:parse5:	Backpointer: None
 DEBUG:parse5:	Predicted: (0, ROOT → · S) in column 0
 DEBUG:parse5:
@@ -133,3 +133,103 @@ DEBUG:parse5:	Backpointer: None
 DEBUG:parse5:	Predicted: (4, P → · with) in column 4
 DEBUG:parse5:(0, ROOT → S ·) => ATTACH
 DEBUG:parse5:(4, P → · with) => SCAN
+DEBUG:parse5:	Scanned to get: (4, P → with ·) in column 5
+DEBUG:parse5:	Backpointer: ((4, P → · with),)
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 5
+DEBUG:parse5:(4, P → with ·) => ATTACH
+DEBUG:parse5:	Attached to get: (4, PP → P · NP) in column 5
+DEBUG:parse5:	 Backpointer: (None, (4, P → with ·))
+DEBUG:parse5:(4, PP → P · NP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, NP → · Det N) in column 5
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, NP → · NP PP) in column 5
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, NP → · Papa) in column 5
+DEBUG:parse5:(5, NP → · Det N) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, Det → · the) in column 5
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, Det → · a) in column 5
+DEBUG:parse5:(5, NP → · NP PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, NP → · Det N) in column 5
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, NP → · NP PP) in column 5
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (5, NP → · Papa) in column 5
+DEBUG:parse5:(5, NP → · Papa) => SCAN
+DEBUG:parse5:(5, Det → · the) => SCAN
+DEBUG:parse5:(5, Det → · a) => SCAN
+DEBUG:parse5:	Scanned to get: (5, Det → a ·) in column 6
+DEBUG:parse5:	Backpointer: ((5, Det → · a),)
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 6
+DEBUG:parse5:(5, Det → a ·) => ATTACH
+DEBUG:parse5:	Attached to get: (5, NP → Det · N) in column 6
+DEBUG:parse5:	 Backpointer: (None, (5, Det → a ·))
+DEBUG:parse5:(5, NP → Det · N) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (6, N → · caviar) in column 6
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (6, N → · spoon) in column 6
+DEBUG:parse5:(6, N → · caviar) => SCAN
+DEBUG:parse5:(6, N → · spoon) => SCAN
+DEBUG:parse5:	Scanned to get: (6, N → spoon ·) in column 7
+DEBUG:parse5:	Backpointer: ((6, N → · spoon),)
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 7
+DEBUG:parse5:(6, N → spoon ·) => ATTACH
+DEBUG:parse5:	Attached to get: (5, NP → Det N ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (5, Det → a ·)), (6, N → spoon ·))
+DEBUG:parse5:(5, NP → Det N ·) => ATTACH
+DEBUG:parse5:	Attached to get: (4, PP → P NP ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (4, P → with ·)), (5, NP → Det N ·))
+DEBUG:parse5:	Attached to get: (5, NP → NP · PP) in column 7
+DEBUG:parse5:	 Backpointer: (None, (5, NP → Det N ·))
+DEBUG:parse5:(4, PP → P NP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (2, NP → NP PP ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (2, NP → Det N ·)), (4, PP → P NP ·))
+DEBUG:parse5:	Attached to get: (1, VP → VP PP ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (1, VP → V NP ·)), (4, PP → P NP ·))
+DEBUG:parse5:(5, NP → NP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (7, PP → · P NP) in column 7
+DEBUG:parse5:(2, NP → NP PP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (1, VP → V NP ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (1, V → ate ·)), (2, NP → NP PP ·))
+DEBUG:parse5:	Attached to get: (2, NP → NP · PP) in column 7
+DEBUG:parse5:	 Backpointer: (None, (2, NP → NP PP ·))
+DEBUG:parse5:(1, VP → VP PP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, S → NP VP ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (0, NP → Papa ·)), (1, VP → VP PP ·))
+DEBUG:parse5:	Attached to get: (1, VP → VP · PP) in column 7
+DEBUG:parse5:	 Backpointer: (None, (1, VP → VP PP ·))
+DEBUG:parse5:(7, PP → · P NP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (7, P → · with) in column 7
+DEBUG:parse5:(1, VP → V NP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, S → NP VP ·) in column 7
+DEBUG:parse5:	 Backpointer: ((None, (0, NP → Papa ·)), (1, VP → V NP ·))
+DEBUG:parse5:	Attached to get: (1, VP → VP · PP) in column 7
+DEBUG:parse5:	 Backpointer: (None, (1, VP → V NP ·))
+DEBUG:parse5:(2, NP → NP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (7, PP → · P NP) in column 7
+DEBUG:parse5:(0, S → NP VP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, ROOT → S ·) in column 7
+DEBUG:parse5:	 Backpointer: (None, (0, S → NP VP ·))
+DEBUG:parse5:(1, VP → VP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (7, PP → · P NP) in column 7
+DEBUG:parse5:(7, P → · with) => SCAN
+DEBUG:parse5:(0, S → NP VP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, ROOT → S ·) in column 7
+DEBUG:parse5:	 Backpointer: (None, (0, S → NP VP ·))
+DEBUG:parse5:(1, VP → VP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (7, PP → · P NP) in column 7
+DEBUG:parse5:(0, ROOT → S ·) => ATTACH
+DEBUG:parse5:(0, ROOT → S ·) => ATTACH
+DEBUG:parse5:Profile of work done: Counter({'PREDICT': 45, 'ATTACH': 25, 'SCAN': 7})
