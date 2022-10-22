@@ -1,0 +1,135 @@
+DEBUG:parse5:======================================================================
+DEBUG:parse5:Parsing sentence: Papa ate the caviar
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, ROOT → · S) in column 0
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 0
+DEBUG:parse5:(0, ROOT → · S) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, S → · NP VP) in column 0
+DEBUG:parse5:(0, S → · NP VP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, NP → · Det N) in column 0
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, NP → · NP PP) in column 0
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, NP → · Papa) in column 0
+DEBUG:parse5:(0, NP → · Det N) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, Det → · the) in column 0
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, Det → · a) in column 0
+DEBUG:parse5:(0, NP → · NP PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, NP → · Det N) in column 0
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, NP → · NP PP) in column 0
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (0, NP → · Papa) in column 0
+DEBUG:parse5:(0, NP → · Papa) => SCAN
+DEBUG:parse5:	Scanned to get: (0, NP → Papa ·) in column 1
+DEBUG:parse5:	Backpointer: ((0, NP → · Papa),)
+DEBUG:parse5:(0, Det → · the) => SCAN
+DEBUG:parse5:(0, Det → · a) => SCAN
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 1
+DEBUG:parse5:(0, NP → Papa ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, S → NP · VP) in column 1
+DEBUG:parse5:	 Backpointer: (None, (0, NP → Papa ·))
+DEBUG:parse5:	Attached to get: (0, NP → NP · PP) in column 1
+DEBUG:parse5:	 Backpointer: (None, (0, NP → Papa ·))
+DEBUG:parse5:(0, S → NP · VP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, VP → · V NP) in column 1
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, VP → · VP PP) in column 1
+DEBUG:parse5:(0, NP → NP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, PP → · P NP) in column 1
+DEBUG:parse5:(1, VP → · V NP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, V → · ate) in column 1
+DEBUG:parse5:(1, VP → · VP PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, VP → · V NP) in column 1
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, VP → · VP PP) in column 1
+DEBUG:parse5:(1, PP → · P NP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (1, P → · with) in column 1
+DEBUG:parse5:(1, V → · ate) => SCAN
+DEBUG:parse5:	Scanned to get: (1, V → ate ·) in column 2
+DEBUG:parse5:	Backpointer: ((1, V → · ate),)
+DEBUG:parse5:(1, P → · with) => SCAN
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 2
+DEBUG:parse5:(1, V → ate ·) => ATTACH
+DEBUG:parse5:	Attached to get: (1, VP → V · NP) in column 2
+DEBUG:parse5:	 Backpointer: (None, (1, V → ate ·))
+DEBUG:parse5:(1, VP → V · NP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, NP → · Det N) in column 2
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, NP → · NP PP) in column 2
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, NP → · Papa) in column 2
+DEBUG:parse5:(2, NP → · Det N) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, Det → · the) in column 2
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, Det → · a) in column 2
+DEBUG:parse5:(2, NP → · NP PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, NP → · Det N) in column 2
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, NP → · NP PP) in column 2
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (2, NP → · Papa) in column 2
+DEBUG:parse5:(2, NP → · Papa) => SCAN
+DEBUG:parse5:(2, Det → · the) => SCAN
+DEBUG:parse5:	Scanned to get: (2, Det → the ·) in column 3
+DEBUG:parse5:	Backpointer: ((2, Det → · the),)
+DEBUG:parse5:(2, Det → · a) => SCAN
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 3
+DEBUG:parse5:(2, Det → the ·) => ATTACH
+DEBUG:parse5:	Attached to get: (2, NP → Det · N) in column 3
+DEBUG:parse5:	 Backpointer: (None, (2, Det → the ·))
+DEBUG:parse5:(2, NP → Det · N) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (3, N → · caviar) in column 3
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (3, N → · spoon) in column 3
+DEBUG:parse5:(3, N → · caviar) => SCAN
+DEBUG:parse5:	Scanned to get: (3, N → caviar ·) in column 4
+DEBUG:parse5:	Backpointer: ((3, N → · caviar),)
+DEBUG:parse5:(3, N → · spoon) => SCAN
+DEBUG:parse5:
+DEBUG:parse5:Processing items in column 4
+DEBUG:parse5:(3, N → caviar ·) => ATTACH
+DEBUG:parse5:	Attached to get: (2, NP → Det N ·) in column 4
+DEBUG:parse5:	 Backpointer: ((None, (2, Det → the ·)), (3, N → caviar ·))
+DEBUG:parse5:(2, NP → Det N ·) => ATTACH
+DEBUG:parse5:	Attached to get: (1, VP → V NP ·) in column 4
+DEBUG:parse5:	 Backpointer: ((None, (1, V → ate ·)), (2, NP → Det N ·))
+DEBUG:parse5:	Attached to get: (2, NP → NP · PP) in column 4
+DEBUG:parse5:	 Backpointer: (None, (2, NP → Det N ·))
+DEBUG:parse5:(1, VP → V NP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, S → NP VP ·) in column 4
+DEBUG:parse5:	 Backpointer: ((None, (0, NP → Papa ·)), (1, VP → V NP ·))
+DEBUG:parse5:	Attached to get: (1, VP → VP · PP) in column 4
+DEBUG:parse5:	 Backpointer: (None, (1, VP → V NP ·))
+DEBUG:parse5:(2, NP → NP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (4, PP → · P NP) in column 4
+DEBUG:parse5:(0, S → NP VP ·) => ATTACH
+DEBUG:parse5:	Attached to get: (0, ROOT → S ·) in column 4
+DEBUG:parse5:	 Backpointer: (None, (0, S → NP VP ·))
+DEBUG:parse5:(1, VP → VP · PP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (4, PP → · P NP) in column 4
+DEBUG:parse5:(4, PP → · P NP) => PREDICT
+DEBUG:parse5:	Backpointer: None
+DEBUG:parse5:	Predicted: (4, P → · with) in column 4
+DEBUG:parse5:(0, ROOT → S ·) => ATTACH
+DEBUG:parse5:(4, P → · with) => SCAN

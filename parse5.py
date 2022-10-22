@@ -92,11 +92,21 @@ class EarleyChart:
         return False  # we didn't find any appropriate item
 
     def printItem(self, last_item):
-        if last_item.backpointer is not None:
-            print(last_item.backpointer.rule)
-            self.printItem(last_item.backpointer)
+        if type(last_item) is not tuple:
+            self.printItem(last_item.backpointer);
         else:
-            return print(last_item.rule)
+            pdb.set_trace()
+            if type(last_item.backpointer[0]) is tuple:
+                self.printItem(last_item.backpointer[0][1]);
+                self.printItem(last_item.backpointer[1]);
+            else:
+                self.printItem(last_item[1]);
+
+        if last_item is not None and type(last_item) is tuple:
+            print(last_item[1].rule)
+        else:
+            print(last_item.rule);
+            return;
 
     """
     
@@ -184,8 +194,7 @@ class EarleyChart:
         if it matches what this item is looking for next."""
         # keeps the backpointer of the rules
         if position < len(self.tokens) and self.tokens[position] == item.next_symbol():
-            new_item = item.with_dot_advanced(weights=item.weights, backpointer=item)
-            pdb.set_trace()
+            new_item = item.with_dot_advanced(weights=item.weights, backpointer=tuple([item]))
             if new_item not in self.cols:
                 self.cols[position + 1].push(new_item)
             log.debug(f"\tScanned to get: {new_item} in column {position + 1}")
@@ -205,7 +214,7 @@ class EarleyChart:
         for customer in self.cols[mid].all():  # could you eliminate this inefficient linear search?
             #for all constitutients in agenda
             if customer.next_symbol() == item.rule.lhs:
-                new_item = customer.with_dot_advanced(weights=(item.weights + customer.weights), backpointer=item);
+                new_item = customer.with_dot_advanced(weights=(item.weights + customer.weights), backpointer=tuple([customer.backpointer, item]));
                 self.cols[position].push(new_item)
                 log.debug(f"\tAttached to get: {new_item} in column {position}")
                 self.profile["ATTACH"] += 1
@@ -369,7 +378,7 @@ class Item:
     weights: float
     dot_position: int
     start_position: int
-    backpointer: Item
+    backpointer: tuple
 
     # We don't store the end_position, which corresponds to the column
     # that the item is in, although you could store it redundantly for
