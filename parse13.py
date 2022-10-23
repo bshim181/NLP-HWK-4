@@ -118,14 +118,18 @@ class EarleyChart:
         ##print rule of this item 
         if item is None:
             return
-        print(item[0].rule)
+        if type(item) is Item:
+            print(item.rule)
+            self.printItem(item)
+        else:
+            print(item[0].rule)
 
         if type(item[1]) is not tuple:
             print(item)
             self.printItem(item[1])
         else:
-            self.printItem(item[0])
             self.printItem(item[1][0])
+            self.printItem(item[1][1][0])
         # print("Rule: {}".format(item[0]))
         # # if item[1] is not None:
         # #     print(item[1])
