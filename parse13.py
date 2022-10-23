@@ -114,22 +114,31 @@ class EarleyChart:
         return self.maxWeights  # returns maxProb of Parse.
 
     def printItem(self, item):
-
-        ##print rule of this item 
-        if item is None:
-            return
-        if type(item) is Item:
-            print(item.rule)
-            self.printItem(item)
-        else:
+        print(item)
+        self.printItem(item[1])
+        if type(item) is tuple:
             print(item[0].rule)
+            if type(item[1]) is tuple:
+                self.printItem(item[1][0])
+            else:
+                self.printItem(item[1])
+      
+        ##print rule of this item 
+        # if item is None:
+        #     return
+        # print(item.rule)
+        # if type(item) is Item:
+        #     print(item.rule)
+        #     self.printItem(item)
+        # else:
+        #     print(item[0].rule)
 
-        if type(item[1]) is not tuple:
-            print(item)
-            self.printItem(item[1])
-        else:
-            self.printItem(item[1][0])
-            self.printItem(item[1][1][0])
+        # if type(item[1]) is not tuple:
+        #     print(item)
+        #     self.printItem(item[1])
+        # else:
+        #     self.printItem(item[1][0])
+        #     self.printItem(item[1][1][0])
         # print("Rule: {}".format(item[0]))
         # # if item[1] is not None:
         # #     print(item[1])
