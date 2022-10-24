@@ -76,7 +76,6 @@ class EarleyChart:
         self.profile: CounterType[str] = Counter()
         self.maxWeights = float("inf");
 
-        self.predConst = {}
         self.bp = {}
 
 
@@ -114,25 +113,37 @@ class EarleyChart:
         return self.maxWeights  # returns maxProb of Parse.
 
     def printItem(self, item, result):
-
         if (item == None) :
             return result
+        pdb.set_trace()
+        if(type(item[1]) == Item):
+            result = result + "(" + item[1].rule.lhs + item[1].rule.rhs[0]
+        if(type(item[1]) == tuple):
+            result = result
 
-        if (type(item[0]) == Item):
+        self.printItem(item[1], result)
+
+
+        if type(item[0]) == Item:
             if item[0].rule.rhs[0] in self.tokens:
-                result = result + "(" + item[0].rule.lhs + " " + item[0].rule.rhs[0] + ")"
-            else:
-                result = result + "(" + item[0].rule.lhs
-        if (type(item[0]) == tuple):
-            if item[0][0] == None:
-                result = result + "(" + item[0][1][0].rule.lhs + " " + item[0][1][0].rule.rhs[0] + ")"
+                return result + "(" + item[0].rule.lhs + " " + item[0].rule.rhs[0];
+            result = result + "(" + item[0].rule.lhs;
+            result = self.printItem(item[1][1], result);
+        if type(item[1]) == Item:
+            if item[1].rule.rhs[0] in self.tokens:
+                return result + "(" + item[1].rule.lhs + " " + item[1].rule.rhs[0];
+            result = result + "(" + item[0].rule.lhs;
+            result = self.printItem(item[1][1], result);
 
-        result = self.printItem(item[1], result)
-        if (type(item[0]) == Item):
-            if item[0].rule.rhs[0] not in self.tokens:
-                result = result + ")"
+        if type(item[0]) == tuple:
+            result = result + "(" + item[0][0].rule.lhs;
+            if(item[0][1] == None):
+                self.printItem(item, result)
+            result = self.printItem(item[0][1], result)
+            result = result + ")"
+            result = self.printItem(item[1], result)
+
         return result;
-
 
         # recursively print the parse tree from the chart of backpointers
 
@@ -187,7 +198,7 @@ class EarleyChart:
         # keeps the backpointer of the rules
         if position < len(self.tokens) and self.tokens[position] == item[0].next_symbol():
             new_item = item[0].with_dot_advanced()
-            self.cols[position + 1].push(new_item, item, item[2])
+            self.cols[position + 1].push(new_item, item[0], item[2])
             #trying reprocessing
             log.debug(f"\tScanned to get: {new_item} in column {position + 1}")
             self.profile["SCAN"] += 1
@@ -206,9 +217,9 @@ class EarleyChart:
                 index = self.cols[position].checkExist(new_item);
                 if(index > 0):
                     if min(self.cols[position].getWeights(index), item[2] + customer[2]) == (item[2] + customer[2]):
-                        self.cols[position].reprocess(new_item, (customer[1], item), item[2] + customer[2]);
+                        self.cols[position].reprocess(new_item, (customer, item[1]), item[2] + customer[2]);
                 else:
-                    self.cols[position].push(new_item, (customer[1], item), item[2] + customer[2])
+                    self.cols[position].push(new_item, (customer, item[1]), item[2] + customer[2])
                     log.debug(f"\tAttached to get: {new_item} in column {position}")
                     self.profile["ATTACH"] += 1
 

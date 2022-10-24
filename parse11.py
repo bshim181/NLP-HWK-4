@@ -97,29 +97,31 @@ class EarleyChart:
         """Was the sentence accepted?
                 That is, does the finished chart contain an item corresponding to a parse of the sentence?
                 This method answers the recognition question, but not the parsing question."""
-
+        result = "";
         for item in self.cols[-1].all():  # the last column
             if (item[0].rule.lhs == self.grammar.start_symbol  # a ROOT item in this column
                     and item[0].next_symbol() is None  # that is complete
                     and item[0].start_position == 0):  # and started back at position 0
                 self.maxWeights = item[2];
                 self.maxWeights = min(self.maxWeights, item[2])
+                result = self.printItem(item, result)
         if (self.maxWeights == float("inf")):
             self.maxWeights = 0;
         return self.maxWeights  # returns maxProb of Parse.
 
-    def printItem(self, item):
+    def printItem(self, item, result):
+        if item[1] == None:
+            return result;
+        pdb.set_trace()
+        if type(item[0]) == Item:
+            result = result + item[0].rule.lhs + "\t"
 
-        #Backpointer
-
-        print(item[0])
-        index = self.cols[item[1].start_position].search(item[1])
-        item = self.cols[item[1].start_position].getItem(index)
-        #pdb.set_trace()
-        self.printItem(item)
+        else:
+            if None not in item[0]:
+                result = result + item[0].rule.lhs + "\t"
+        #result = result + "(" + item[0].rule.lhs
+        self.printItem(item[1], result)
         # recursively print the parse tree from the chart of backpointers
-
-        return;
 
     def _run_earley(self) -> None:
         """Fill in the Earley chart"""
@@ -185,7 +187,6 @@ class EarleyChart:
         # backponter
         # backpointer datastrcture
         mid = item[0].start_position  # start position of this item = end position of item to its left
-
         for customer in self.cols[mid].all():  # could you eliminate this inefficient linear search?
             if customer[0].next_symbol() == item[0].rule.lhs:
                 new_item = customer[0].with_dot_advanced()
